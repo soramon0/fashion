@@ -8,6 +8,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 
+import PaginationIndicator from './pagination-indicator';
 import Slide, {SLIDER_HEIGHT} from './slide';
 import SubSlide from './sub-slide';
 
@@ -76,10 +77,11 @@ function OnBoarding() {
   const footerXOffset = useAnimatedStyle(() => ({
     transform: [{translateX: -xOffset.value}],
   }));
+  const currentIndex = useDerivedValue(() => xOffset.value / width);
 
   return (
-    <View style={style.container}>
-      <Animated.View style={[style.slider, background]}>
+    <View style={styles.container}>
+      <Animated.View style={[styles.slider, background]}>
         <Animated.ScrollView
           ref={scroll}
           horizontal
@@ -100,36 +102,46 @@ function OnBoarding() {
         </Animated.ScrollView>
       </Animated.View>
 
-      <View style={style.footer}>
+      <View style={styles.footer}>
         <Animated.View style={[StyleSheet.absoluteFillObject, background]} />
-        <Animated.View style={[style.footerContent, footerXOffset]}>
-          {slides.map((slide, i) => (
-            <SubSlide
-              key={slide.subtitle}
-              subtitle={slide.subtitle}
-              description={slide.description}
-              last={i === slides.length - 1}
-              onPress={() => {
-                const last = i === slides.length - 1;
-                if (last) {
-                  console.log('last');
-                } else {
-                  console.log(scroll.current);
-                  scroll.current?.scrollTo({
-                    x: width * (i + 1),
-                    animated: true,
-                  });
-                }
-              }}
-            />
-          ))}
-        </Animated.View>
+        <View style={[styles.footerContent]}>
+          <View style={styles.pagination}>
+            {slides.map((slide, i) => (
+              <PaginationIndicator
+                key={slide.title}
+                index={i}
+                currentIndex={currentIndex}
+              />
+            ))}
+          </View>
+          <Animated.View style={[styles.subslides, footerXOffset]}>
+            {slides.map((slide, i) => (
+              <SubSlide
+                key={slide.subtitle}
+                subtitle={slide.subtitle}
+                description={slide.description}
+                last={i === slides.length - 1}
+                onPress={() => {
+                  const last = i === slides.length - 1;
+                  if (last) {
+                    console.log('last');
+                  } else {
+                    scroll.current?.scrollTo({
+                      x: width * (i + 1),
+                      animated: true,
+                    });
+                  }
+                }}
+              />
+            ))}
+          </Animated.View>
+        </View>
       </View>
     </View>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -143,10 +155,20 @@ const style = StyleSheet.create({
   },
   footerContent: {
     flex: 1,
-    flexDirection: 'row',
-    width: width * slides.length,
     backgroundColor: 'white',
     borderTopLeftRadius: BORDER_RADIUS,
+  },
+  pagination: {
+    width,
+    height: BORDER_RADIUS * 0.8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  subslides: {
+    flex: 1,
+    flexDirection: 'row',
+    width: width * slides.length,
   },
 });
 
