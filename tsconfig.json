@@ -1,0 +1,17 @@
+// prettier-ignore
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",     /* Recommended React Native TSConfig base */
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
+
+    /* Completeness */
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    /* Additional */
+    "noUncheckedIndexedAccess": true, // TLDR - Checking an indexed value (array[0]) now forces type <T | undefined> as there is no confirmation that index exists
+    // "baseUrl": "./",
+    // "paths": {
+    //   "@src/*": ["src/*"]
+    // }
+  }
+  // "include": ["src"]
+}
